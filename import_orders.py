@@ -103,4 +103,3 @@ df = getOrders()
 df = createItemsCol(df)
 df = dropUnusedCols(df)
 df.to_csv('orders.csv', index=False)
-
