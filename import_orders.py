@@ -63,15 +63,23 @@ def getAllOrders():
 # Adds to the DataFrame a tidied version of the line_items column, called items
 def createItemsCol(dataframe):
     items = []
+    packages = []
     for order in dataframe["line_items"]:
+        refill_count = 0
+        tin_count = 0
         well_formatted_order = []
         for item in order:
             well_formatted_item = []
             well_formatted_item.append(item["quantity"])
             well_formatted_item.append(item["title"])
+            if "refill" in item["title"].lower():
+                refill_count += item["quantity"]
+            if "tin" in item["title"].lower():
+                tin_count += item["quantity"]
             well_formatted_order.append(well_formatted_item)
         items.append(well_formatted_order)
-    dataframe = dataframe.assign(items = items)
+        packages.append(f"Refill: {refill_count}, Tin: {tin_count}")
+    dataframe = dataframe.assign(items=items, packages=packages)
     return dataframe
 
 # Keeps the columns listed below and drops everything else
@@ -79,6 +87,7 @@ def dropUnusedCols(dataframe):
     keep_cols = ["order_number",
                  "created_at",
                  "items",
+                 "packages",
                  "subtotal_price",
                  "total_discounts",
                  "total_line_items_price",
