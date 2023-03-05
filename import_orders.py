@@ -36,10 +36,13 @@ def getOrders():
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         orders = response.json()["orders"]
+        for order in orders:
+            order["shipping_address"] = order["shipping_address"] if order["shipping_address"] else {}
         df = pd.DataFrame(orders)
         return df
     else:
         raise Exception("Failed to retrieve fulfilled orders from Shopify API")
+
 
 # Returns a DataFrame of all orders (by making multiple API calls)
 def getAllOrders():
@@ -85,26 +88,26 @@ def createItemsCol(dataframe):
 # Keeps the columns listed below and drops everything else
 def dropUnusedCols(dataframe):
     keep_cols = ["order_number",
-                 "created_at",
-                 "items",
-                 "packages",
-                 "subtotal_price",
-                 "total_discounts",
-                 "total_line_items_price",
-                 "total_tax",
-                 "total_price",
-                 "currency",
-                 "discount_codes",
-                 "financial_status",
-                 "fulfillment_status",
-                 "gateway",
-                 "payment_gateway_names",
-                 "referring_site",
-                 "tags",
-                 "refunds",
-                 "email",
-                 "customer",
-                 "shipping_address"]
+                "created_at",
+                "items",
+                "packages",
+                "subtotal_price",
+                "total_discounts",
+                "total_line_items_price",
+                "total_tax",
+                "total_price",
+                "currency",
+                "discount_codes",
+                "financial_status",
+                "fulfillment_status",
+                "gateway",
+                "payment_gateway_names",
+                "referring_site",
+                "tags",
+                "refunds",
+                "email",
+                "customer",
+                "shipping_address"]
     dataframe = dataframe[keep_cols]
     return dataframe
 
